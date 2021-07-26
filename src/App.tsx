@@ -5,6 +5,9 @@ import {useMutation, useQuery} from "@apollo/client";
 import {ClassroomType} from "./models/models";
 import {OCCUPY_CLASSROOM} from "./api/operations/mutations/occupyClassroom";
 import {FILL_DB} from "./api/operations/mutations/fillDB";
+import {FREE_CLASSROOM} from "./api/operations/mutations/freeClassroom";
+import {DISABLE_CLASSROOM} from "./api/operations/mutations/disableClassroom";
+import {ENABLE_CLASSROOM} from "./api/operations/mutations/enableClassroom";
 
 function App() {
   const [chosenClassroom, setChosenClassroom] = useState<string>('');
@@ -15,7 +18,30 @@ function App() {
       input: {
         classroomName: chosenClassroom,
         userId: 1,
-        until: '2021-07-07T10:15:00Z',
+        until: '2022-07-07T10:15:00Z',
+      }
+    }
+  });
+  const [freeClassroom] = useMutation(FREE_CLASSROOM, {
+    variables: {
+      input: {
+        classroomName: chosenClassroom
+      }
+    }
+  });
+  const [disableClassroom] = useMutation(DISABLE_CLASSROOM, {
+    variables: {
+      input: {
+        classroomName: chosenClassroom,
+        comment: 'Classroom disabled',
+        until: '2022-07-07T10:15:00Z'
+      }
+    }
+  });
+  const [enableClassroom] = useMutation(ENABLE_CLASSROOM, {
+    variables: {
+      input: {
+        classroomName: chosenClassroom,
       }
     }
   });
@@ -33,10 +59,10 @@ function App() {
     <div className={styles.wrapper}>
       <div>
         <p>Вибрана аудиторія: {chosenClassroom}</p>
-        <button onClick={() => occupyClassroom()}>Occupy</button>
-        <button>Free</button>
-        <button>Disable</button>
-        <button>Enable</button>
+        <button onClick={() => occupyClassroom()} disabled={!chosenClassroom}>Occupy</button>
+        <button onClick={() => freeClassroom()} disabled={!chosenClassroom}>Free</button>
+        <button onClick={() => disableClassroom()} disabled={!chosenClassroom}>Disable</button>
+        <button onClick={() => enableClassroom()} disabled={!chosenClassroom}>Enable</button>
         <div className={styles.fillDB}>
           <p>Fill DB</p>
           <label>
