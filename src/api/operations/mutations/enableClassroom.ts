@@ -6,6 +6,10 @@ export const ENABLE_CLASSROOM = gql`
             classroom {
                 id
                 name
+                disabled {
+                    comment
+                    until
+                }
             }
             userErrors {
                 message
