@@ -84,11 +84,10 @@ function App() {
       </div>
       {!loading && !error && (
         <ul>
-        {data.classrooms.slice()
-          .sort((a: ClassroomType, b: ClassroomType) => Number(a.name) - Number(b.name))
+        {data.classrooms.slice().sort((a: ClassroomType, b: ClassroomType) => Number(a.name) - Number(b.name))
           .map(({id, name, occupied, disabled}: ClassroomType) => (
           <li style={{backgroundColor: occupied ? '#FFF' : '#0F0', color: disabled ? '#CCC' : '#000'}}
-              onClick={() => handleChoose(name)}
+              onClick={() => handleChoose(name)} key={id}
           >
             <p>
               <b>ID:</b> {id}
