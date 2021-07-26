@@ -55,7 +55,7 @@ function App() {
     variables: {
       num: parseInt(num as unknown as string)
     },
-    refetchQueries: [{ query: GET_CLASSROOMS }]
+    refetchQueries: [{query: GET_CLASSROOMS}]
   });
 
   const handleChoose = (name: string) => {
@@ -84,26 +84,33 @@ function App() {
       </div>
       {!loading && !error && (
         <ul>
-        {data.classrooms.slice().sort((a: ClassroomType, b: ClassroomType) => Number(a.name) - Number(b.name))
-          .map(({id, name, occupied, disabled}: ClassroomType) => (
-          <li style={{backgroundColor: occupied ? '#FFF' : '#0F0', color: disabled ? '#CCC' : '#000'}}
-              onClick={() => handleChoose(name)} key={id}
-          >
-            <p>
-              <b>ID:</b> {id}
-            </p>
-            <p>
-              <b>Name:</b> {name}
-            </p>
-            <p>
-              <b>Occupied:</b> {occupied ? 'Yes' : 'No'}
-            </p>
-            <p>
-              <b>Disabled:</b> {disabled ? 'Yes' : 'no'}
-            </p>
-          </li>
-        ))}
-      </ul>
+          {data.classrooms.slice().sort((a: ClassroomType, b: ClassroomType) => Number(a.name) - Number(b.name))
+            .map(({id, name, occupied, disabled}: ClassroomType) => (
+              <li style={{backgroundColor: disable && chosenClassroom === name ? '#fff' : occupied ? '#FFF' : '#0F0',
+                color: disabled ? '#CCC' : '#000', display: 'flex', justifyContent: 'center', alignItems: 'center',
+              borderWidth: chosenClassroom === name ? 2 : 1}}
+                  onClick={() => handleChoose(name)} key={id}
+              >
+                {disable && chosenClassroom === name ?
+                  <img src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/35771931234507.564a1d2403b3a.gif"
+                       alt="loading" width={48}/>
+                  : <div>
+                    <p>
+                      <b>ID:</b> {id}
+                    </p>
+                    <p>
+                      <b>Name:</b> {name}
+                    </p>
+                    <p>
+                      <b>Occupied:</b> {occupied ? 'Yes' : 'No'}
+                    </p>
+                    <p>
+                      <b>Disabled:</b> {disabled ? 'Yes' : 'no'}
+                    </p>
+                  </div>}
+              </li>
+            ))}
+        </ul>
       )}
     </div>
   );

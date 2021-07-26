@@ -5,7 +5,6 @@ export const FREE_CLASSROOM = gql`
         freeClassroom(input: $input) {
             classroom {
                 id
-                name
                 occupied {
                     user {
                         id
@@ -15,6 +14,7 @@ export const FREE_CLASSROOM = gql`
                         type
                     }
                     until
+                    state
                 }
             }
                 userErrors {
