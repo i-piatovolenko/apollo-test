@@ -1,15 +1,17 @@
 .wrapper {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 75vw;
-    height: 80vh;
 }
 
 .wrapper ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .wrapper ul li {
@@ -17,4 +19,23 @@
     border-radius: 6px;
     padding: 16px;
     margin: 8px;
+    cursor: pointer;
+}
+
+.wrapper ul li p {
+    margin: 0;
+    padding: 0;
+}
+
+.fillDB {
+    margin: 16px 0;
+    border-radius: 6px;
+    padding: 16px;
+    border: 1px solid #eee;
+    color: #ccc;
+}
+
+.fillDB p {
+    margin: 0;
+    padding: 0;
 }
