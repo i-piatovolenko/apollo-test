@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './App.module.css';
 import {GET_CLASSROOMS} from "./api/operations/queries/classrooms";
 import {useMutation, useQuery} from "@apollo/client";
@@ -11,9 +11,11 @@ import {ENABLE_CLASSROOM} from "./api/operations/mutations/enableClassroom";
 
 function App() {
   const [chosenClassroom, setChosenClassroom] = useState<string>('');
+  const [disable, setDisable] = useState(false);
   const [num, setNum] = useState(10);
   const {data, loading, error} = useQuery(GET_CLASSROOMS);
-  const [occupyClassroom] = useMutation(OCCUPY_CLASSROOM, {
+
+  const [occupyClassroom, {loading: loadingOccupy}] = useMutation(OCCUPY_CLASSROOM, {
     variables: {
       input: {
         classroomName: chosenClassroom,
@@ -22,14 +24,16 @@ function App() {
       }
     }
   });
-  const [freeClassroom] = useMutation(FREE_CLASSROOM, {
+
+  const [freeClassroom, {loading: loadingFree}] = useMutation(FREE_CLASSROOM, {
     variables: {
       input: {
         classroomName: chosenClassroom
       }
     }
   });
-  const [disableClassroom] = useMutation(DISABLE_CLASSROOM, {
+
+  const [disableClassroom, {loading: loadingDisable}] = useMutation(DISABLE_CLASSROOM, {
     variables: {
       input: {
         classroomName: chosenClassroom,
@@ -38,42 +42,51 @@ function App() {
       }
     }
   });
-  const [enableClassroom] = useMutation(ENABLE_CLASSROOM, {
+
+  const [enableClassroom, {loading: loadingEnable}] = useMutation(ENABLE_CLASSROOM, {
     variables: {
       input: {
         classroomName: chosenClassroom,
       }
     }
   });
+
   const [fillDB, {loading: loadingDB}] = useMutation(FILL_DB, {
     variables: {
-      num
-    }
+      num: parseInt(num as unknown as string)
+    },
+    refetchQueries: [{ query: GET_CLASSROOMS }]
   });
 
   const handleChoose = (name: string) => {
     setChosenClassroom(name);
   };
 
+  useEffect(() => {
+    setDisable(loadingDB || loadingDisable || loadingEnable || loadingFree || loadingOccupy || loading);
+  }, [loadingDB, loadingDisable, loadingEnable, loadingFree, loadingOccupy, loading]);
+
   return (
     <div className={styles.wrapper}>
       <div>
         <p>Вибрана аудиторія: {chosenClassroom}</p>
-        <button onClick={() => occupyClassroom()} disabled={!chosenClassroom}>Occupy</button>
-        <button onClick={() => freeClassroom()} disabled={!chosenClassroom}>Free</button>
-        <button onClick={() => disableClassroom()} disabled={!chosenClassroom}>Disable</button>
-        <button onClick={() => enableClassroom()} disabled={!chosenClassroom}>Enable</button>
+        <button onClick={() => occupyClassroom()} disabled={disable || !chosenClassroom}>Occupy</button>
+        <button onClick={() => freeClassroom()} disabled={disable || !chosenClassroom}>Free</button>
+        <button onClick={() => disableClassroom()} disabled={disable || !chosenClassroom}>Disable</button>
+        <button onClick={() => enableClassroom()} disabled={disable || !chosenClassroom}>Enable</button>
         <div className={styles.fillDB}>
           <p>Fill DB</p>
           <label>
             <input type="number" value={num} onChange={(e: any) => setNum(e.target.value)}/>
           </label>
-          <button onClick={() => fillDB()} disabled={loadingDB}>{loadingDB ? 'wait' : 'refill DB'}</button>
+          <button onClick={() => fillDB()} disabled={disable}>{disable ? 'wait' : 'refill DB'}</button>
         </div>
       </div>
       {!loading && !error && (
         <ul>
-        {data.classrooms.map(({id, name, occupied, disabled}: ClassroomType) => (
+        {data.classrooms.slice()
+          .sort((a: ClassroomType, b: ClassroomType) => Number(a.name) - Number(b.name))
+          .map(({id, name, occupied, disabled}: ClassroomType) => (
           <li style={{backgroundColor: occupied ? '#FFF' : '#0F0', color: disabled ? '#CCC' : '#000'}}
               onClick={() => handleChoose(name)}
           >
